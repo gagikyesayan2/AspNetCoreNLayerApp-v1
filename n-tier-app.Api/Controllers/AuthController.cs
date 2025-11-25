@@ -4,6 +4,7 @@ using n_tier_app.Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using n_tier_app.Business.Dto;
+using n_tier_app.Business.DTOs;
 
 namespace n_tier_app.Api.Controllers
 {
@@ -36,7 +37,7 @@ namespace n_tier_app.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            UserSignUpDto userDto = new UserSignUpDto
+            UserSignInDto userDto = new UserSignInDto
             {
                 Email = userSignInModel.Email,
                 Password = userSignInModel.Password
@@ -50,7 +51,7 @@ namespace n_tier_app.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> RefreshToken([FromBody] string refreshToken)
         {
-            var result = await userRegistrationService.ValidateRefreshTokenAndReturnAccessToken(refreshToken);
+            var result = await userRegistrationService.ValidateRefreshToken(refreshToken);
             
             return Ok(result);
         }
