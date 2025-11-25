@@ -39,7 +39,7 @@ namespace n_tier_app.Business.Services
         private string GenerateAccessToken(int userId)
         {
             var claims = new[]
-          {
+            {
               new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
               new Claim(ClaimTypes.Role, "User")
             };
