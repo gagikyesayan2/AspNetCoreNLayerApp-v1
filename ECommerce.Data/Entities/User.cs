@@ -28,7 +28,7 @@ namespace n_tier_app.Data.models
 
         public DateTime CreatedAt { get; } = DateTime.UtcNow;
 
-        // Add this to link RefreshTokens
+        // Add this to link (Navigation property on) RefreshTokens 
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
     }

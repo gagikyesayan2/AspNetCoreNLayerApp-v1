@@ -17,8 +17,9 @@ namespace n_tier_app.Data.Entities
         //That => is called an expression-bodied property in C#.
         //shorter syntax for a property that only returns a value (no set).
         public bool IsExpired => DateTime.UtcNow >= Expires;
-        public int UserId { get; set; }
+        
         // navigation property
+        public int UserId { get; set; }
         public User User { get; set; }
     }
 }
