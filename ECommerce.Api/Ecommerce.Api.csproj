@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>n_tier_app.Api</RootNamespace>
+    <RootNamespace>Ecommerce.Api</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\n-tier-app.Business\n-tier-app.Business.csproj" />
+    <ProjectReference Include="..\Ecommerce.Business\Ecommerce.Business.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>n_tier_app.Business</RootNamespace>
+    <RootNamespace>Ecommerce.Business</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\n-tier-app.Data\n-tier-app.Data.csproj" />
+    <ProjectReference Include="..\Ecommerce.Data\Ecommerce.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

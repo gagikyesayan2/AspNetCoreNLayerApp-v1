@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace n_tier_app.Api.Models
+namespace Ecommerce.Api.Models
 {
     public class UserSignUpModel
     {

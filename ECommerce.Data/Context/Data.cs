@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
-using n_tier_app.Data.Entities;
-using n_tier_app.Data.models;
+using Ecommerce.Data.Entities;
+using Ecommerce.Data.models;
 
-namespace n_tier_app.Data.Context
+namespace Ecommerce.Data.Context
 {
     public class AppDbContext : DbContext
     {

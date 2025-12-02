@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using n_tier_app.Api.Models;
-using n_tier_app.Business.Interfaces;
+using Ecommerce.Api.Models;
+using Ecommerce.Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using n_tier_app.Business.DTOs;
+using Ecommerce.Business.DTOs;
 
-namespace n_tier_app.Api.Controllers
+namespace Ecommerce.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
