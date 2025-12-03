@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace n_tier_app.Business.DTOs;
+namespace Ecommerce.Business.DTOs;
 
 public class UserSignUpDto
 {

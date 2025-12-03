@@ -1,4 +1,4 @@
-﻿namespace n_tier_app.Business.Config
+﻿namespace Ecommerce.Business.Config
 {
     public class JwtSettings
     {

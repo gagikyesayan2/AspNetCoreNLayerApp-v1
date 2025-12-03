@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace n_tier_app.Business.DTOs
+namespace Ecommerce.Business.DTOs
 {
     public class UserSignInDto
     {

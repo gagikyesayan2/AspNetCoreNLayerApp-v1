@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using n_tier_app.Data.Context;
-using n_tier_app.Data.Entities;
-using n_tier_app.Data.Interfaces;
-using n_tier_app.Data.models;
 
-namespace n_tier_app.Data.Repositories
+using Ecommerce.Data.Entities;
+using Ecommerce.Data.Interfaces;
+using Ecommerce.Data.models;
+using Ecommerce.Data.Context;
+
+namespace Ecommerce.Data.Repositories
 {
 
     // what is internal access modifier, it is used for

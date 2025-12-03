@@ -1,12 +1,12 @@
-﻿using n_tier_app.Data.Entities;
-using n_tier_app.Data.models;
+﻿using Ecommerce.Data.Entities;
+using Ecommerce.Data.models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace n_tier_app.Data.Interfaces
+namespace Ecommerce.Data.Interfaces
 {
 
     public interface IUserRepository

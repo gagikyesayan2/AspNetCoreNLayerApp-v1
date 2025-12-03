@@ -1,17 +1,16 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using n_tier_app.Business.Dto;
-using n_tier_app.Business.Interfaces;
-using n_tier_app.Data.Interfaces;
-using n_tier_app.Data.models;
+using Ecommerce.Business.DTOs;
+using Ecommerce.Business.Interfaces;
+using Ecommerce.Data.Interfaces;
+using Ecommerce.Data.models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using n_tier_app.Business.Config;
+using Ecommerce.Business.Config;
 using Microsoft.Extensions.Options;
-using n_tier_app.Data.Entities;
-using n_tier_app.Business.DTOs;
+using Ecommerce.Data.Entities;
 
-namespace n_tier_app.Business.Services
+namespace Ecommerce.Business.Services
 {
 
     public class AuthService : IAuthService

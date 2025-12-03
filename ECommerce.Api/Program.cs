@@ -3,15 +3,15 @@ using Api.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using n_tier_app.Business.Config;
-using n_tier_app.Business.Interfaces;
-using n_tier_app.Business.Services;
-using n_tier_app.Data.Context;
-using n_tier_app.Data.Interfaces;
-using n_tier_app.Data.Repositories;
+using Ecommerce.Business.Config;
+using Ecommerce.Business.Interfaces;
+using Ecommerce.Data.Interfaces;
+using Ecommerce.Data.Repositories;
 using System.Text;
+using Ecommerce.Business.Services;
+using Ecommerce.Data.Context;
 
-namespace n_tier_app.Api
+namespace Ecommerce.Api
 {
     public class Program
     {
