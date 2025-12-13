@@ -22,6 +22,7 @@ namespace Ecommerce.Data.Entities
         // sometimes a product may not be categorized yet (admin forgot)
         public Category? Category { get; set; }
 
+        public ICollection<ProductVariant> productVariants = new List<ProductVariant>();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
     }
