@@ -1,11 +1,10 @@
-﻿using Ecommerce.Data.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Data.models
+namespace Ecommerce.Data.Entities.Identity
 {
     // what is internal access modifier, it is used for
     // its scope (inside project/assembly)
@@ -15,11 +14,11 @@ namespace Ecommerce.Data.models
     // reflection: The ability of a program to inspect or modify its own structure
     // at runtime.
 
- 
+
     public class User
     {
         public int Id { get; set; }
-        public string Name { get; set;}
+        public string Name { get; set; }
 
         public string Email { get; set; }
         public string PasswordHash { get; set; }

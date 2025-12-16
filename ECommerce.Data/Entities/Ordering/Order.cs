@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Data.Entities
+namespace Ecommerce.Data.Entities.Ordering
 {
     public enum OrderStatus
     {
-        Pending = 1,    
-        Paid = 2,       
-        Shipped = 3,    
+        Pending = 1,
+        Paid = 2,
+        Shipped = 3,
         Cancelled = 4
     }
     public class Order

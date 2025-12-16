@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
-using Ecommerce.Data.Entities;
 using Ecommerce.Data.Interfaces;
-using Ecommerce.Data.models;
 using Ecommerce.Data.Context;
+using Ecommerce.Data.Entities.Identity;
 
 namespace Ecommerce.Data.Repositories
 {
