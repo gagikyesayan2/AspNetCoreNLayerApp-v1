@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
-using Ecommerce.Data.Entities;
-using Ecommerce.Data.models;
+using Ecommerce.Data.Entities.Identity;
+using Ecommerce.Data.Entities.Catalog;
+using Ecommerce.Data.Entities.Cart;
+using Ecommerce.Data.Entities.Ordering;
 
 namespace Ecommerce.Data.Context
 {

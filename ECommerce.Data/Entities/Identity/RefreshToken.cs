@@ -1,11 +1,10 @@
-﻿using Ecommerce.Data.models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Data.Entities
+namespace Ecommerce.Data.Entities.Identity
 {
     public class RefreshToken
     {
@@ -17,7 +16,7 @@ namespace Ecommerce.Data.Entities
         //That => is called an expression-bodied property in C#.
         //shorter syntax for a property that only returns a value (no set).
         public bool IsExpired => DateTime.UtcNow >= Expires;
-        
+
         // navigation property
         public int UserId { get; set; }
         public User User { get; set; }

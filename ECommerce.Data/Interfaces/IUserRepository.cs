@@ -1,5 +1,4 @@
-﻿using Ecommerce.Data.Entities;
-using Ecommerce.Data.models;
+﻿using Ecommerce.Data.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;

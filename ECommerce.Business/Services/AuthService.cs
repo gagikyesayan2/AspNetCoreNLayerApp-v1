@@ -2,23 +2,23 @@
 using Ecommerce.Business.DTOs;
 using Ecommerce.Business.Interfaces;
 using Ecommerce.Data.Interfaces;
-using Ecommerce.Data.models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Ecommerce.Business.Config;
 using Microsoft.Extensions.Options;
 using Ecommerce.Data.Entities;
+using Ecommerce.Data.Entities.Identity;
 
 namespace Ecommerce.Business.Services
 {
-
+    
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
 
         private readonly JwtSettings _jwtSettings;
-
+        
         public AuthService(IUserRepository userRepository, IOptions<JwtSettings> jwtOptions)
         {
             _userRepository = userRepository;

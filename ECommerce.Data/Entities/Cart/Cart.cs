@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Data.Entities
+namespace Ecommerce.Data.Entities.Cart
 {
     public class Cart
     {
@@ -12,7 +12,7 @@ namespace Ecommerce.Data.Entities
 
         public int? UserId { get; set; }
 
-    
+
         public ICollection<CartItem> Items { get; set; } = new List<CartItem>();
     }
 

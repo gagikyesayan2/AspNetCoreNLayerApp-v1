@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Data.Entities
+namespace Ecommerce.Data.Entities.Catalog
 {
     public class Category
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        
+
         // nullable "?", description might be null
         public string? Description { get; set; }
 
