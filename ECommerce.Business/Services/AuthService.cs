@@ -1,32 +1,33 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Ecommerce.Business.Config;
 using Ecommerce.Business.DTOs;
 using Ecommerce.Business.Interfaces;
+using Ecommerce.Data.Entities.Identity;
 using Ecommerce.Data.Interfaces;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Ecommerce.Business.Config;
-using Microsoft.Extensions.Options;
-using Ecommerce.Data.Entities;
-using Ecommerce.Data.Entities.Identity;
 
 namespace Ecommerce.Business.Services
 {
-    
+
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
 
         private readonly JwtSettings _jwtSettings;
-        
-        public AuthService(IUserRepository userRepository, IOptions<JwtSettings> jwtOptions)
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
+
+        public AuthService(IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository, IOptions<JwtSettings> jwtOptions)
         {
             _userRepository = userRepository;
+            _refreshTokenRepository = refreshTokenRepository;
             _jwtSettings = jwtOptions.Value;
         }
-     
 
-        
+
+
         private string GenerateRefreshToken()
         {
             var randomBytes = new byte[64];
@@ -57,7 +58,7 @@ namespace Ecommerce.Business.Services
         }
         public async Task<object> ValidateRefreshToken(string refreshToken)
         {
-            var refreshTokenEntity = await _userRepository.FindRefreshTokenMatch(refreshToken);
+            var refreshTokenEntity = await _refreshTokenRepository.FindMatchAsync(refreshToken);
 
             if (refreshTokenEntity == null)
             {
@@ -73,7 +74,7 @@ namespace Ecommerce.Business.Services
                     Expires = DateTime.UtcNow.AddDays(7)
                 };
 
-                await _userRepository.SaveRefreshToken(newRefreshTokenEntity);
+                await _refreshTokenRepository.SaveAsync(newRefreshTokenEntity);
                 string newAccessToken = GenerateAccessToken(refreshTokenEntity.UserId);
                 return new
                 {
@@ -91,19 +92,19 @@ namespace Ecommerce.Business.Services
 
         public async Task<object> SignIn(UserSignInDto userSignInDto)
         {
-            var user = _userRepository.GetByEmail(userSignInDto.Email!);
+            var user = _userRepository.GetByEmailAsync(userSignInDto.Email!);
 
-            if(user == null || !BCrypt.Net.BCrypt.Verify(userSignInDto.Password, user.PasswordHash))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(userSignInDto.Password, user.PasswordHash))
             {
                 throw new InvalidOperationException("wrong email or password.");
             }
             var accessToken = GenerateAccessToken(user.Id);
 
             //  Generate JWT token
-            var existingRefreshToken = await _userRepository.GetRefreshToken(user.Id);
+            var existingRefreshToken = await _refreshTokenRepository.GetAsync(user.Id);
             string refreshToken;
 
-            if(existingRefreshToken != null && !existingRefreshToken.IsExpired)
+            if (existingRefreshToken != null && !existingRefreshToken.IsExpired)
             {
                 refreshToken = existingRefreshToken.Token;
             }
@@ -116,7 +117,7 @@ namespace Ecommerce.Business.Services
                     UserId = user.Id,
                     Expires = DateTime.UtcNow.AddDays(7)
                 };
-                await _userRepository.SaveRefreshToken(RefreshTokenEntity);
+                await _refreshTokenRepository.SaveAsync(RefreshTokenEntity);
 
             }
 
@@ -130,7 +131,7 @@ namespace Ecommerce.Business.Services
         public async Task<UserSignUpDto> SignUp(UserSignUpDto userSignUpDto)
         {
 
-            var result = _userRepository.GetByEmail(userSignUpDto.Email!);
+            var result = _userRepository.GetByEmailAsync(userSignUpDto.Email!);
 
             if (result != null)
             {
@@ -145,7 +146,7 @@ namespace Ecommerce.Business.Services
                 Email = userSignUpDto.Email,
                 PasswordHash = passwordHash
             };
-            await _userRepository.SaveUser(user);
+            await _userRepository.SaveAsync(user);
 
             return new UserSignUpDto
             {
@@ -153,6 +154,6 @@ namespace Ecommerce.Business.Services
 
             };
         }
-        
+
     }
 }
