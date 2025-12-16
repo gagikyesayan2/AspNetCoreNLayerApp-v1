@@ -23,33 +23,15 @@ namespace Ecommerce.Data.Repositories
             _context = context;
         }
 
-        public async Task SaveUser(User user)
+        public async Task SaveAsync(User user)
         {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
 
-        public async Task SaveRefreshToken(RefreshToken refreshToken)
-        {
-            await _context.RefreshTokens.AddAsync(refreshToken);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<RefreshToken?> GetRefreshToken(int id)
-        {
-            return await _context.RefreshTokens.FirstOrDefaultAsync(token => token.UserId == id);
-        }
-        public async Task<RefreshToken?> FindRefreshTokenMatch(string refreshToken)
-        {
-            return await _context.RefreshTokens.FirstOrDefaultAsync(token => token.Token == refreshToken);
-        }
-        public User GetByEmail(string email)
+        public User GetByEmailAsync(string email)
         {
             return _context.Users.FirstOrDefault(user => user.Email == email)!;
-        }
-        public User GetByPassword(string password)
-        {
-            return _context.Users.FirstOrDefault(user => user.PasswordHash == password)!;
         }
 
 

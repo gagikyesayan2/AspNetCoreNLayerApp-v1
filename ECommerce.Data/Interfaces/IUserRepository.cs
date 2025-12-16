@@ -10,15 +10,10 @@ namespace Ecommerce.Data.Interfaces
 
     public interface IUserRepository
     {
-        public Task SaveUser(User user);
+        public Task SaveAsync(User user);
 
-        public User GetByEmail(string email);
-        public User GetByPassword(string email);
-
-        public Task SaveRefreshToken(RefreshToken refreshToken);
-
-        public Task<RefreshToken> GetRefreshToken(int id);
-        public Task<RefreshToken> FindRefreshTokenMatch(string refreshToken);
+        public User GetByEmailAsync(string email);
+       
 
     }
 }
