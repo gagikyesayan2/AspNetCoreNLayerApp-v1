@@ -1,20 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Data.Entities.Catalog
+namespace Ecommerce.Data.Entities.Catalog;
+public class ProductVariant
 {
-    public class ProductVariant
+    public int Id { get; set; }
+    public string Sku { get; set; }
+    public decimal Price { get; set; }
+
+    public int ProductId { get; set; }
+
+    public Product Product { get; set; } = null!;
+}
+
+
+public class ProductVariantConfiguration : IEntityTypeConfiguration<ProductVariant>
+{
+    public void Configure(EntityTypeBuilder<ProductVariant> builder)
     {
-        public int Id { get; set; }
-        public string Sku { get; set; } = null!;
-        public decimal Price { get; set; }
+        builder.HasOne(v => v.Product)
+            .WithMany(p => p.productVariants)
+            .HasForeignKey(v => v.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        public int ProductId { get; set; }
-
-        public Product Product { get; set; } = null!;
+        builder.Property(v => v.Price)
+            .HasPrecision(18, 2);
     }
-
 }

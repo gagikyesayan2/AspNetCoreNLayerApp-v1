@@ -1,20 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Ecommerce.Data.Interfaces;
-using Ecommerce.Data.Context;
+﻿using Ecommerce.Data.Context;
 using Ecommerce.Data.Entities.Identity;
+using Ecommerce.Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Data.Repositories
 {
-
-    // what is internal access modifier, it is used for
-    // its scope (inside project/assembly)
-
-    // why public and not internal, because entity freamwork need publicity to inspect
-    // code (class) and find necessary data it wants, that's called reflection 
-    // reflection: The ability of a program to inspect or modify its own structure
-    // at runtime.
-
-
     public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _context;
@@ -29,9 +19,9 @@ namespace Ecommerce.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public User GetByEmailAsync(string email)
+        public async Task<User> GetByEmailAsync(string email)
         {
-            return _context.Users.FirstOrDefault(user => user.Email == email)!;
+            return await _context.Users.FirstOrDefaultAsync(user => user.Email == email)!;
         }
 
 

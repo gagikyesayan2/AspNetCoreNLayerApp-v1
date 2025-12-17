@@ -1,14 +1,14 @@
-﻿
-using Ecommerce.Business.DTOs;
+﻿using Ecommerce.Business.DTOs.Token;
+using Ecommerce.Business.DTOs.User;
 
 
 namespace Ecommerce.Business.Interfaces
 {
     public interface IAuthService
     {
-        public Task<UserSignUpDto> SignUp(UserSignUpDto userSignUpDto);
-        public Task<object> SignIn(UserSignInDto userSignInDto);
+        public Task<UserSignUpResponseDto> SignUpAsync(UserSignUpRequestDto userSignUpDto);
+        public Task<UserSignInResponseDto> SignInAsync(UserSignInRequestDto userSignInDto);
 
-        public Task<object> ValidateRefreshToken(string refreshToken);
+        public Task<RefreshTokenResponseDto> ValidateRefreshTokenAsync(RefreshTokenRequestDto refreshToken);
     }
 }

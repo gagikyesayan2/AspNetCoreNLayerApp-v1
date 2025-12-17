@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ecommerce.Business.DTOs
+namespace Ecommerce.Business.DTOs.User
 {
-    public class UserSignInDto
+    public class UserSignInRequestDto
     {
 
-  
+
         public string Email { get; set; }
         public string Password { get; set; }
     }

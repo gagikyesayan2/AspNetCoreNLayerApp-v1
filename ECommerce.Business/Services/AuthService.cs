@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Business.Config;
-using Ecommerce.Business.DTOs;
+using Ecommerce.Business.DTOs.Token;
+using Ecommerce.Business.DTOs.User;
 using Ecommerce.Business.Interfaces;
 using Ecommerce.Data.Entities.Identity;
 using Ecommerce.Data.Interfaces;
@@ -56,9 +57,9 @@ namespace Ecommerce.Business.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        public async Task<object> ValidateRefreshToken(string refreshToken)
+        public async Task<RefreshTokenResponseDto> ValidateRefreshTokenAsync(RefreshTokenRequestDto responseDto)
         {
-            var refreshTokenEntity = await _refreshTokenRepository.FindMatchAsync(refreshToken);
+            var refreshTokenEntity = await _refreshTokenRepository.FindMatchAsync(responseDto.RefreshToken);
 
             if (refreshTokenEntity == null)
             {
@@ -76,10 +77,10 @@ namespace Ecommerce.Business.Services
 
                 await _refreshTokenRepository.SaveAsync(newRefreshTokenEntity);
                 string newAccessToken = GenerateAccessToken(refreshTokenEntity.UserId);
-                return new
+                return new RefreshTokenResponseDto
                 {
-                    newRefreshToken,
-                    newAccessToken
+                    RefreshToken = newRefreshToken,
+                    AccessToken = newAccessToken
                 };
             }
             else
@@ -90,9 +91,10 @@ namespace Ecommerce.Business.Services
 
         }
 
-        public async Task<object> SignIn(UserSignInDto userSignInDto)
+      
+        public async Task<UserSignInResponseDto> SignInAsync(UserSignInRequestDto userSignInDto)
         {
-            var user = _userRepository.GetByEmailAsync(userSignInDto.Email!);
+            var user = await _userRepository.GetByEmailAsync(userSignInDto.Email!);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(userSignInDto.Password, user.PasswordHash))
             {
@@ -100,7 +102,7 @@ namespace Ecommerce.Business.Services
             }
             var accessToken = GenerateAccessToken(user.Id);
 
-            //  Generate JWT token
+
             var existingRefreshToken = await _refreshTokenRepository.GetAsync(user.Id);
             string refreshToken;
 
@@ -120,37 +122,39 @@ namespace Ecommerce.Business.Services
                 await _refreshTokenRepository.SaveAsync(RefreshTokenEntity);
 
             }
-
-            return new
+            
+            return new UserSignInResponseDto
             {
                 AccessToken = accessToken,
-                RefreshToken = refreshToken
+                RefreshToken = refreshToken,
+                Email = user.Email
 
             };
         }
-        public async Task<UserSignUpDto> SignUp(UserSignUpDto userSignUpDto)
+        public async Task<UserSignUpResponseDto> SignUpAsync(UserSignUpRequestDto requestDto)
         {
 
-            var result = _userRepository.GetByEmailAsync(userSignUpDto.Email!);
+            var result = await _userRepository.GetByEmailAsync(requestDto.Email);
 
             if (result != null)
             {
                 throw new InvalidOperationException("Email is already in use.");
 
             }
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(userSignUpDto.Password);
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(requestDto.Password);
 
             var user = new User
             {
-                Name = userSignUpDto.Name,
-                Email = userSignUpDto.Email,
+                Name = requestDto.Name,
+                Email = requestDto.Email,
                 PasswordHash = passwordHash
             };
             await _userRepository.SaveAsync(user);
 
-            return new UserSignUpDto
+            return new UserSignUpResponseDto
             {
-                Name = userSignUpDto.Name
+                Email = requestDto.Email,
+                Name = requestDto.Name,
 
             };
         }

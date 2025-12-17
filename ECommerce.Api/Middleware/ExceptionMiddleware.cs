@@ -18,7 +18,7 @@ namespace Api.Middleware
         {
             try
             {
-                await _next(context); // Call the next middleware
+                await _next(context); 
             }
             catch (Exception ex)
             {
@@ -37,7 +37,7 @@ namespace Api.Middleware
                 Success = false,
 
                 Message = "An unexpected error occurred. Please try again later.",
-                Details = exception.Message // Optional: remove in production
+                Details = exception.Message 
             };
 
             var json = JsonSerializer.Serialize(response);

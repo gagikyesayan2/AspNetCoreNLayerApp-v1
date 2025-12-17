@@ -2,94 +2,104 @@
 using Ecommerce.Api.Models.Category;
 using Ecommerce.Business.DTOs.Category;
 using Ecommerce.Business.Interfaces;
-using Ecommerce.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ecommerce.Api.Controllers
+namespace Ecommerce.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]/[action]")]
+public class CategoryController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]/[action]")]
-    public class CategoryController : ControllerBase
+    private readonly ICategoryService _categoryService;
+    public CategoryController(ICategoryService categoryService)
     {
-        private readonly ICategoryService _categoryService;
-        public CategoryController(ICategoryService categoryService)
+        _categoryService = categoryService;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateModel requestModel)
+    {
+
+        var dto = new CategoryCreateDto
         {
-            _categoryService = categoryService;
-        }
+            Name = requestModel.Name,
+            Description = requestModel.Description
+        };
 
-        [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateModel model)
+        var result = await _categoryService.CreateCategoryAsync(dto);
+
+        var responseModel = new CategoryReadModel
         {
+            Id = result.Id,
+            Name = result.Name,
+            Description = result.Description
+        };
+        return CreatedAtAction(
+            nameof(GetCategory),
+            new { id = responseModel.Id },
+            responseModel
+            );
+    }
 
-            CategoryCreateDto dto = new CategoryCreateDto
-            {
-                Name = model.Name,
-                Description = model.Description
-            };
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<CategoryReadModel>> GetCategory(int id)
+    {
+        var category = await _categoryService.GetCategoryByIdAsync(id);
+ 
 
-            var createdCategory = await _categoryService.CreateAsync(dto);
-
-            return CreatedAtAction(
-                nameof(GetCategoryById),
-                new { id = createdCategory.Id },
-                createdCategory
-                );
-        }
-
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<CategoryReadModel>> GetCategoryById(int id)
+        var model = new CategoryReadModel
         {
-            var category = await _categoryService.GetByIdAsync(id);
-            if (category == null)
-                return NotFound();
+            Id = category.Id,
+            Name = category.Name,
+            Description = category.Description
+        };
+        return Ok(model);
+    }
 
-            var model = new CategoryReadModel
-            {
-                Id = category.Id,
-                Name = category.Name,
-                Description = category.Description
-            };
-            return Ok(model);
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetAllCategories()
+    {
+        var result = await _categoryService.GetAllCategoriesAsync();
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllCategories()
+        var model = result.Select(d => new CategoryReadModel
         {
-            var categories = await _categoryService.GetAllAsync();
+            Id = d.Id,
+            Name = d.Name,
+            Description = d.Description
+        });
 
-            return Ok(categories);
-        }
+        return Ok(model);
+    }
 
-        [HttpPost("{id:int}")]
-        public async Task<IActionResult> UpdateCategory(int id, CategoryUpdateModel model)
+    [HttpPost("{id:int}")]
+    public async Task<IActionResult> UpdateCategory(int id, CategoryUpdateModel model)
+    {
+        if (model == null || id <= 0)
         {
-            if(model == null || id <= 0)
-            {
-                return BadRequest("Invalid id or data");
-            }
-            var dto = new CategoryReadDto
-            {
-                Name = model.Name,
-                Description = model.Description
-            };
-           var category = await _categoryService.UpdateCategoryAsync(id, dto);
-
-            return Ok(new CategoryUpdateDto
-            {
-                Name = category.Name,
-                Description = category.Description,
-            });
+            return BadRequest("Invalid id or data");
         }
-
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteCategory(int id)
+        var dto = new CategoryReadDto
         {
-            if(id <= 0)
-            {
-                return BadRequest("invalid id");
-            }
-            await _categoryService.DeleteCategoryAsync(id);
-            return NoContent();
+            Name = model.Name,
+            Description = model.Description
+        };
+        var category = await _categoryService.UpdateCategoryAsync(id, dto);
+
+        return Ok(new CategoryUpdateModel
+        {
+            Name = category.Name,
+            Description = category.Description,
+        });
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteCategory(int id)
+    {
+        if (id <= 0)
+        {
+            return BadRequest("invalid id");
         }
+        await _categoryService.DeleteCategoryAsync(id);
+        return NoContent();
     }
 }

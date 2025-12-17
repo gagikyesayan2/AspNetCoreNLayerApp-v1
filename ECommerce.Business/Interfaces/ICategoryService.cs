@@ -10,11 +10,11 @@ namespace Ecommerce.Business.Interfaces
 {
     public interface ICategoryService
     {
-        public Task<IEnumerable<CategoryReadDto>> GetAllAsync();
+        public Task<IEnumerable<CategoryReadDto>> GetAllCategoriesAsync();
 
-        public Task<CategoryReadDto> GetByIdAsync(int id);
+        public Task<CategoryReadDto> GetCategoryByIdAsync(int id);
 
-        public Task<CategoryReadDto> CreateAsync(CategoryCreateDto dto);
+        public Task<CategoryReadDto> CreateCategoryAsync(CategoryCreateDto dto);
 
 
         public Task DeleteCategoryAsync(int id);
