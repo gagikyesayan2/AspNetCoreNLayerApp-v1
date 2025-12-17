@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Ecommerce.Data.Entities.Ordering
+﻿namespace Ecommerce.Data.Entities.Ordering
 {
     public enum OrderStatus
     {
@@ -17,10 +11,7 @@ namespace Ecommerce.Data.Entities.Ordering
     {
         public int Id { get; set; }
         public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
-
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
-
-        // Navigation
         public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
     }
 

@@ -1,68 +1,87 @@
-using Microsoft.AspNetCore.Mvc;
-using Ecommerce.Api.Models;
+using Ecommerce.Api.Models.Token;
+using Ecommerce.Api.Models.User;
+using Ecommerce.Business.DTOs.Token;
+using Ecommerce.Business.DTOs.User;
 using Ecommerce.Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Ecommerce.Business.DTOs;
 
-namespace Ecommerce.Api.Controllers
+namespace Ecommerce.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]/[action]")]
+public class AuthController(IAuthService userRegistrationService) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]/[action]")]
-    public class AuthController(IAuthService userRegistrationService) : ControllerBase
+    [HttpPost]
+    public async Task<IActionResult> SignUp([FromBody] UserSignUpRequestModel requestModel)
     {
 
-
-        [HttpPost]
-        public async Task<ActionResult> SignUp([FromBody] UserSignUpModel userSignUpModel)
+        var dto = new UserSignUpRequestDto
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            Email = requestModel.Email,
+            Name = requestModel.Name,
+            Password = requestModel.Password
+        };
 
-            UserSignUpDto userDto = new UserSignUpDto
-            {
-                Email = userSignUpModel.Email,
-                Name = userSignUpModel.Name,
-                Password = userSignUpModel.Password
-            };
+        var result = await userRegistrationService.SignUpAsync(dto);
 
-            var result = await userRegistrationService.SignUp(userDto);
-
-            return Ok(result);
-        }
-        [HttpPost]
-        public async Task<ActionResult> SignIn([FromBody] UserSignInModel userSignInModel)
+        var responseModel = new UserSignUpResponseModel
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            UserSignInDto userDto = new UserSignInDto
-            {
-                Email = userSignInModel.Email,
-                Password = userSignInModel.Password
-            };
-
-            var result = await userRegistrationService.SignIn(userDto);
-            Console.WriteLine(result);
-            return Ok(result);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> RefreshToken([FromBody] string refreshToken)
-        {
-            var result = await userRegistrationService.ValidateRefreshToken(refreshToken);
-            
-            return Ok(result);
-        }
-
-        [Authorize]
-        [HttpGet("profile")]
-        public IActionResult GetProfile()
-        {
-            // You can access claims from the token
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            return Ok(new { Email = email, Message = "This is a protected endpoint" });
-        }
+            Name = result.Name,
+            Email = result.Email
+        };
+        return Ok(responseModel);
     }
 
+    [HttpPost]
+    public async Task<ActionResult> SignIn([FromBody] UserSignInRequestModel requestModel)
+    {
+
+        var dto = new UserSignInRequestDto
+        {
+            Email = requestModel.Email,
+            Password = requestModel.Password
+        };
+
+        var result = await userRegistrationService.SignInAsync(dto);
+
+        var responseModel = new UserSignInResponseModel
+        {
+            RefreshToken = result.RefreshToken,
+            AccessToken = result.AccessToken,
+            Email = result.Email
+
+        };
+        return Ok(responseModel);
+
+    }
+
+    [HttpPost]
+    public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenRequestModel requestModel)
+    {
+
+        var dto = new RefreshTokenRequestDto
+        {
+            RefreshToken = requestModel.RefreshToken
+        };
+
+        var result = await userRegistrationService.ValidateRefreshTokenAsync(dto);
+
+        var responseModel = new RefreshTokenResponseModel
+        {
+            RefreshToken = result.RefreshToken,
+            AccessToken = result.AccessToken
+        };
+        return Ok(responseModel);
+    }
+
+    [Authorize]
+    [HttpGet("profile")]
+    public IActionResult GetProfile()
+    {
+
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        return Ok(new { Email = email, Message = "This is a protected endpoint" });
+    }
 }

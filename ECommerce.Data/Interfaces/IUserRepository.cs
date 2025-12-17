@@ -1,9 +1,4 @@
 ﻿using Ecommerce.Data.Entities.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ecommerce.Data.Interfaces
 {
@@ -12,8 +7,8 @@ namespace Ecommerce.Data.Interfaces
     {
         public Task SaveAsync(User user);
 
-        public User GetByEmailAsync(string email);
-       
+        public Task<User> GetByEmailAsync(string email);
+
 
     }
 }
