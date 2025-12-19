@@ -1,8 +1,8 @@
 ﻿using Ecommerce.Business.DTOs.Category;
+using Ecommerce.Business.Exceptions;
 using Ecommerce.Business.Interfaces;
 using Ecommerce.Data.Entities.Catalog;
 using Ecommerce.Data.Interfaces;
-using Microsoft.IdentityModel.Tokens;
 namespace Ecommerce.Business.Services;
 
 public class CategoryService : ICategoryService
@@ -41,7 +41,11 @@ public class CategoryService : ICategoryService
         var category = await _categoryRepository.GetByIdAsync(id);
         if (category is null)
         {
-            throw new Exception("category is not found");
+            throw new NotFoundAppException(
+                "Category not found.",
+                "category_not_found"
+            );
+
         }
 
         return new CategoryReadDto
@@ -55,7 +59,7 @@ public class CategoryService : ICategoryService
     public async Task<IEnumerable<CategoryReadDto>> GetAllCategoriesAsync()
     {
         var categories = await _categoryRepository.GetAllAsync();
-      
+
         return categories.Select(c => new CategoryReadDto
         {
             Id = c.Id,
@@ -77,7 +81,11 @@ public class CategoryService : ICategoryService
 
         if (category is null)
         {
-            throw new Exception("category is not found");
+            throw new NotFoundAppException(
+               "Category not found.",
+               "category_not_found"
+           );
+
         }
 
         return new CategoryReadDto
@@ -93,12 +101,19 @@ public class CategoryService : ICategoryService
     {
         if (id <= 0)
         {
-            throw new ArgumentException("invalid id");
+            throw new ValidationAppException(
+              "Invalid id.",
+              "category_invalid_id"
+             );
         }
 
 
         var deleted = await _categoryRepository.DeleteAsync(id);
         if (!deleted)
-            throw new KeyNotFoundException("Category not found");
+        {
+            throw new NotFoundAppException(
+             "Category not found.",
+             "category_not_found");
+        }
     }
 }
