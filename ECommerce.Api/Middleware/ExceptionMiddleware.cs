@@ -1,47 +1,57 @@
-﻿using System.Net;
+﻿using Ecommerce.Business.Exceptions;
 using System.Text.Json;
 
-namespace Api.Middleware
+namespace Api.Middleware;
+public class ExceptionMiddleware
 {
-    public class ExceptionMiddleware
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
+        _next = next;
+        _logger = logger;
+    }
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
         {
-            _next = next;
-            _logger = logger;
+            await _next(context);
         }
-
-        public async Task InvokeAsync(HttpContext context)
+        catch (AppException ex)
         {
-            try
-            {
-                await _next(context); 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unhandled exception occurred.");
-                await HandleExceptionAsync(context, ex);
-            }
+            _logger.LogWarning(ex, "AppException: {ErrorCode}", ex.ErrorCode);
+            await HandleExceptionAsync(context, ex.StatusCode, ex.ErrorCode, ex.Message);
         }
-
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        catch (Exception ex)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            var response = new
-            {
-                Success = false,
-
-                Message = "An unexpected error occurred. Please try again later.",
-                Details = exception.Message 
-            };
-
-            var json = JsonSerializer.Serialize(response);
-            return context.Response.WriteAsync(json);
+            _logger.LogError(ex, "Unhandled exception occurred.");
+            await HandleExceptionAsync(
+                context,
+                500,
+                "internal_error",
+                "An unexpected error occurred. Please try again later."
+            );
         }
+    }
+
+    private static Task HandleExceptionAsync(
+           HttpContext context,
+           int statusCode,
+           string errorCode,
+           string message)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = statusCode;
+
+        var response = new
+        {
+            success = false,
+            errorCode,
+            message
+        };
+
+        return context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
 }
