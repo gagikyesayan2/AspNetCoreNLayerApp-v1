@@ -20,19 +20,24 @@ namespace Ecommerce.Data.Repositories
             await _context.SaveChangesAsync();
             return category;
         }
-        public async Task<Category> GetByIdAsync(int id)
+        public async Task<Category?> GetByIdAsync(int id)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(category => category.Id == id);
-
+            var category = await _context.Categories
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
             return category;
         }
 
         public async Task<IEnumerable<Category>> GetAllAsync()
         {
-            var categories = await _context.Categories.ToListAsync();
+            var categories = await _context.Categories
+                 .AsNoTracking()
+                 .ToListAsync();
+
             return categories;
+
         }
-        public async Task<Category> UpdateAsync(int id, Category updatedCategory)
+        public async Task<Category?> UpdateAsync(int id, Category updatedCategory)
         {
             var category = await _context.Categories.FindAsync(id);
 

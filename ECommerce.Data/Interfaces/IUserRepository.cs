@@ -7,7 +7,7 @@ namespace Ecommerce.Data.Interfaces
     {
         public Task SaveAsync(User user);
 
-        public Task<User> GetByEmailAsync(string email);
+        public Task<User?> GetByEmailAsync(string email);
 
 
     }

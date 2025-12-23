@@ -19,13 +19,20 @@ namespace Ecommerce.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<RefreshToken?> GetAsync(int id)
+        public async Task<RefreshToken?> GetAsync(int userId)
         {
-            return await _context.RefreshTokens.FirstOrDefaultAsync(token => token.UserId == id);
+            var refreshToken = await _context.RefreshTokens
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.UserId == userId);
+            return refreshToken;
         }
-        public async Task<RefreshToken?> FindMatchAsync(string refreshToken)
+        public async Task<RefreshToken?> FindMatchAsync(string token)
         {
-            return await _context.RefreshTokens.FirstOrDefaultAsync(token => token.Token == refreshToken);
+            var refreshToken = await _context.RefreshTokens
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Token == token);
+
+            return refreshToken;
         }
 
 
