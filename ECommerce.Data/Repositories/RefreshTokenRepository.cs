@@ -29,7 +29,6 @@ namespace Ecommerce.Data.Repositories
         public async Task<RefreshToken?> FindMatchAsync(string token)
         {
             var refreshToken = await _context.RefreshTokens
-                .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.Token == token);
 
             return refreshToken;

@@ -59,41 +59,36 @@ public class AuthService : IAuthService
     }
     public async Task<RefreshTokenResponseDto> ValidateRefreshTokenAsync(RefreshTokenRequestDto responseDto)
     {
-        var refreshTokenEntity = await _refreshTokenRepository.FindMatchAsync(responseDto.RefreshToken);
+        var oldRefreshToken = await _refreshTokenRepository.FindMatchAsync(responseDto.RefreshToken);
 
-        if (refreshTokenEntity == null)
+        if (oldRefreshToken is null || oldRefreshToken.IsExpired || oldRefreshToken.IsRevoked)
         {
-
             throw new UnauthorizedAppException(
             "Refresh token is invalid. Please sign in again.",
             "auth_refresh_invalid");
         }
-        else if (refreshTokenEntity.IsExpired)
+
+        oldRefreshToken.Revoke();
+
+        var newRefreshToken = new RefreshToken
         {
-            string newRefreshToken = GenerateRefreshToken();
-            var newRefreshTokenEntity = new RefreshToken
-            {
-                Token = newRefreshToken,
-                UserId = refreshTokenEntity.UserId,
-                Expires = DateTime.UtcNow.AddDays(7)
-            };
+            Token = GenerateRefreshToken(),
+            UserId = oldRefreshToken.UserId,
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
 
-            await _refreshTokenRepository.SaveAsync(newRefreshTokenEntity);
-            string newAccessToken = GenerateAccessToken(refreshTokenEntity.UserId);
-            return new RefreshTokenResponseDto
-            {
-                RefreshToken = newRefreshToken,
-                AccessToken = newAccessToken
-            };
-        }
-        else
+        await _refreshTokenRepository.SaveAsync(newRefreshToken);
+
+        string newAccessToken = GenerateAccessToken(newRefreshToken.UserId);
+
+        return new RefreshTokenResponseDto
         {
-            throw new UnauthorizedAppException("Refresh token is invalid. Please sign in again.", "auth_refresh_invalid");
+            RefreshToken = newRefreshToken.Token,
+            AccessToken = newAccessToken
+        };
 
-        }
 
-
-    }
+}
 
 
     public async Task<UserSignInResponseDto> SignInAsync(UserSignInRequestDto userSignInDto)

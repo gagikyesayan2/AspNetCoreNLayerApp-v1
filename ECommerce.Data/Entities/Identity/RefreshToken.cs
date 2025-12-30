@@ -10,9 +10,17 @@ public class RefreshToken
     public DateTime Expires { get; set; }
     public bool IsExpired => DateTime.UtcNow >= Expires;
 
+    public bool IsRevoked { get; private set; }
+    public DateTime? RevokedAtUtc { get; private set; }
 
     public int UserId { get; set; }
     public User User { get; set; } = null!;
+
+    public void Revoke()
+    {
+        IsRevoked = true;
+        RevokedAtUtc = DateTime.UtcNow;
+    }
 }
 
 public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
