@@ -1,4 +1,5 @@
 ﻿
+using AutoMapper;
 using Ecommerce.Api.Models.Category;
 using Ecommerce.Business.DTOs.Category;
 using Ecommerce.Business.Interfaces;
@@ -8,32 +9,19 @@ namespace Ecommerce.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class CategoryController : ControllerBase
+public class CategoryController(ICategoryService categoryService, IMapper mapper) : ControllerBase
 {
-    private readonly ICategoryService _categoryService;
-    public CategoryController(ICategoryService categoryService)
-    {
-        _categoryService = categoryService;
-    }
-
+   
     [HttpPost]
     public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateModel requestModel)
     {
 
-        var dto = new CategoryCreateDto
-        {
-            Name = requestModel.Name,
-            Description = requestModel.Description
-        };
+        var requestDto = mapper.Map<CategoryCreateDto>(requestModel);
 
-        var result = await _categoryService.CreateCategoryAsync(dto);
+        var responseDto = await categoryService.CreateCategoryAsync(requestDto);
 
-        var responseModel = new CategoryReadModel
-        {
-            Id = result.Id,
-            Name = result.Name,
-            Description = result.Description
-        };
+        var responseModel = mapper.Map<CategoryReadModel>(responseDto);
+
         return CreatedAtAction(
             nameof(GetCategory),
             new { id = responseModel.Id },
@@ -44,52 +32,37 @@ public class CategoryController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CategoryReadModel>> GetCategory(int id)
     {
-        var category = await _categoryService.GetCategoryByIdAsync(id);
- 
+        var responseDto = await categoryService.GetCategoryByIdAsync(id);
 
-        var model = new CategoryReadModel
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description
-        };
-        return Ok(model);
+        var responseModel = mapper.Map<CategoryReadModel>(responseDto);
+     
+        return Ok(responseModel);
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllCategories()
     {
-        var result = await _categoryService.GetAllCategoriesAsync();
+        var responseDto = await categoryService.GetAllCategoriesAsync();
+        var responseModel = mapper.Map<IEnumerable<CategoryReadModel>>(responseDto);
 
-        var model = result.Select(d => new CategoryReadModel
-        {
-            Id = d.Id,
-            Name = d.Name,
-            Description = d.Description
-        });
-
-        return Ok(model);
+        return Ok(responseModel);
     }
 
     [HttpPost("{id:int}")]
-    public async Task<IActionResult> UpdateCategory(int id, CategoryUpdateModel model)
+    public async Task<IActionResult> UpdateCategory(int id, CategoryUpdateModel requestModel)
     {
-        if (model == null || id <= 0)
+        if (requestModel == null || id <= 0)
         {
             return BadRequest("Invalid id or data");
         }
-        var dto = new CategoryReadDto
-        {
-            Name = model.Name,
-            Description = model.Description
-        };
-        var category = await _categoryService.UpdateCategoryAsync(id, dto);
+   
+        var requestDto = mapper.Map<CategoryUpdateDto>(requestModel);
 
-        return Ok(new CategoryUpdateModel
-        {
-            Name = category.Name,
-            Description = category.Description,
-        });
+        var responseDto = await categoryService.UpdateCategoryAsync(id, requestDto);
+
+        var responseModel = mapper.Map<CategoryUpdateModel>(responseDto);
+
+        return Ok(responseModel);
     }
 
     [HttpDelete("{id:int}")]
@@ -99,7 +72,7 @@ public class CategoryController : ControllerBase
         {
             return BadRequest("invalid id");
         }
-        await _categoryService.DeleteCategoryAsync(id);
+        await categoryService.DeleteCategoryAsync(id);
         return NoContent();
     }
 }

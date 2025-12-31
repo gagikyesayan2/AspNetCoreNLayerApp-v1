@@ -1,3 +1,4 @@
+using AutoMapper;
 using Ecommerce.Api.Models.Token;
 using Ecommerce.Api.Models.User;
 using Ecommerce.Business.DTOs.Token;
@@ -11,26 +12,18 @@ namespace Ecommerce.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class AuthController(IAuthService userRegistrationService) : ControllerBase
+public class AuthController(IAuthService userRegistrationService, IMapper mapper) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> SignUp([FromBody] UserSignUpRequestModel requestModel)
     {
 
-        var dto = new UserSignUpRequestDto
-        {
-            Email = requestModel.Email,
-            Name = requestModel.Name,
-            Password = requestModel.Password
-        };
+        var requestDto = mapper.Map<UserSignUpRequestDto>(requestModel);
 
-        var result = await userRegistrationService.SignUpAsync(dto);
+        var responseDto = await userRegistrationService.SignUpAsync(requestDto);
 
-        var responseModel = new UserSignUpResponseModel
-        {
-            Name = result.Name,
-            Email = result.Email
-        };
+        var responseModel = mapper.Map<UserSignUpResponseModel>(responseDto);
+
         return Ok(responseModel);
     }
 
@@ -38,21 +31,13 @@ public class AuthController(IAuthService userRegistrationService) : ControllerBa
     public async Task<ActionResult> SignIn([FromBody] UserSignInRequestModel requestModel)
     {
 
-        var dto = new UserSignInRequestDto
-        {
-            Email = requestModel.Email,
-            Password = requestModel.Password
-        };
+    
+        var requestDto = mapper.Map<UserSignInRequestDto>(requestModel);
 
-        var result = await userRegistrationService.SignInAsync(dto);
+        var responseDto = await userRegistrationService.SignInAsync(requestDto);
 
-        var responseModel = new UserSignInResponseModel
-        {
-            RefreshToken = result.RefreshToken,
-            AccessToken = result.AccessToken,
-            Email = result.Email
+        var responseModel = mapper.Map<UserSignInResponseModel>(responseDto);
 
-        };
         return Ok(responseModel);
 
     }
@@ -60,19 +45,13 @@ public class AuthController(IAuthService userRegistrationService) : ControllerBa
     [HttpPost]
     public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenRequestModel requestModel)
     {
+        var requestDto = mapper.Map<RefreshTokenRequestDto>(requestModel);
+      
+        var responseDto = await userRegistrationService.ValidateRefreshTokenAsync(requestDto);
 
-        var dto = new RefreshTokenRequestDto
-        {
-            RefreshToken = requestModel.RefreshToken
-        };
+     
+        var responseModel = mapper.Map<RefreshTokenResponseModel>(responseDto);
 
-        var result = await userRegistrationService.ValidateRefreshTokenAsync(dto);
-
-        var responseModel = new RefreshTokenResponseModel
-        {
-            RefreshToken = result.RefreshToken,
-            AccessToken = result.AccessToken
-        };
         return Ok(responseModel);
     }
 
