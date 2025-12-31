@@ -19,12 +19,17 @@ namespace Ecommerce.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<RefreshToken?> GetAsync(int userId)
+        public async Task<RefreshToken?> GetLatestValidAsync(int userId)
         {
-            var refreshToken = await _context.RefreshTokens
+            var now = DateTime.UtcNow;
+
+            return await _context.RefreshTokens
                 .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.UserId == userId);
-            return refreshToken;
+                .Where(t => t.UserId == userId
+                            && !t.IsRevoked
+                            && t.Expires > now)
+                .OrderByDescending(t => t.Id) 
+                .FirstOrDefaultAsync();
         }
         public async Task<RefreshToken?> FindMatchAsync(string token)
         {

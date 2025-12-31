@@ -105,10 +105,10 @@ public class AuthService : IAuthService
         var accessToken = GenerateAccessToken(user.Id);
 
 
-        var existingRefreshToken = await _refreshTokenRepository.GetAsync(user.Id);
+        var existingRefreshToken = await _refreshTokenRepository.GetLatestValidAsync(user.Id);
         string refreshToken;
 
-        if (existingRefreshToken != null && !existingRefreshToken.IsExpired)
+        if (existingRefreshToken != null && !existingRefreshToken.IsExpired && !existingRefreshToken.IsRevoked)
         {
             refreshToken = existingRefreshToken.Token;
         }
