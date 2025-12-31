@@ -1,4 +1,5 @@
-﻿using Ecommerce.Business.DTOs.Category;
+﻿using AutoMapper;
+using Ecommerce.Business.DTOs.Category;
 using Ecommerce.Business.Exceptions;
 using Ecommerce.Business.Interfaces;
 using Ecommerce.Data.Entities.Catalog;
@@ -8,30 +9,26 @@ namespace Ecommerce.Business.Services;
 public class CategoryService : ICategoryService
 {
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IMapper _mapper;
 
-    public CategoryService(ICategoryRepository categoryRepository)
+    public CategoryService(ICategoryRepository categoryRepository, IMapper mapper)
     {
         _categoryRepository = categoryRepository;
+        _mapper = mapper;
     }
 
 
-    public async Task<CategoryReadDto> CreateCategoryAsync(CategoryCreateDto dto)
+    public async Task<CategoryReadDto> CreateCategoryAsync(CategoryCreateDto requestDto)
     {
 
-        var category = new Category
-        {
-            Name = dto.Name,
-            Description = dto.Description
-        };
+        var category = _mapper.Map<Category>(requestDto);
+
 
         await _categoryRepository.SaveAsync(category);
 
-        return new CategoryReadDto
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description
-        };
+        return _mapper.Map<CategoryReadDto>(category);
+      
+
     }
 
 
@@ -48,34 +45,20 @@ public class CategoryService : ICategoryService
 
         }
 
-        return new CategoryReadDto
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description
-        };
-
+        return _mapper.Map<CategoryReadDto>(category);
     }
+
     public async Task<IEnumerable<CategoryReadDto>> GetAllCategoriesAsync()
     {
         var categories = await _categoryRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<CategoryReadDto>>(categories);
 
-        return categories.Select(c => new CategoryReadDto
-        {
-            Id = c.Id,
-            Name = c.Name,
-            Description = c.Description
-        });
     }
 
-    public async Task<CategoryReadDto> UpdateCategoryAsync(int id, CategoryReadDto updatedCategory)
+    public async Task<CategoryReadDto> UpdateCategoryAsync(int id, CategoryUpdateDto requestDto)
     {
-        var entity = new Category
-        {
-            Id = updatedCategory.Id,
-            Name = updatedCategory.Name,
-            Description = updatedCategory.Description
-        };
+     
+        var entity = _mapper.Map<Category>(requestDto);
 
         var category = await _categoryRepository.UpdateAsync(id, entity);
 
@@ -88,15 +71,10 @@ public class CategoryService : ICategoryService
 
         }
 
-        return new CategoryReadDto
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description
-        };
-
+        return _mapper.Map<CategoryReadDto>(category);
 
     }
+
     public async Task DeleteCategoryAsync(int id)
     {
         if (id <= 0)
@@ -115,5 +93,6 @@ public class CategoryService : ICategoryService
              "Category not found.",
              "category_not_found");
         }
+
     }
 }
