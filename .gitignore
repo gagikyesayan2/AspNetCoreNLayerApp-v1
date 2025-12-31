@@ -7,6 +7,10 @@ obj/
 *.rsuser
 .vs/
 
+# accidental stash artifacts
+tash*
+
+
 # secrets / config
 appsettings.json
 appsettings.Development.json
