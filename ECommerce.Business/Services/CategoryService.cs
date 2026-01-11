@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Ecommerce.Business.DTOs.Category;
 using Ecommerce.Business.Exceptions;
+using Ecommerce.Business.Exceptions.Common;
 using Ecommerce.Business.Interfaces;
 using Ecommerce.Data.Entities.Catalog;
 using Ecommerce.Data.Interfaces;
+using System;
 namespace Ecommerce.Business.Services;
 
 public class CategoryService : ICategoryService
@@ -23,7 +25,13 @@ public class CategoryService : ICategoryService
 
         var category = _mapper.Map<Category>(requestDto);
 
+        var categoryExists = await _categoryRepository.ExistsByNameAsync(category);
 
+        if(categoryExists)
+        {
+            throw new ConflictAppException($"Category '{category.Name}' already exists.");
+            
+        }
         await _categoryRepository.SaveAsync(category);
 
         return _mapper.Map<CategoryReadDto>(category);

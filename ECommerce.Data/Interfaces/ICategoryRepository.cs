@@ -13,5 +13,7 @@ namespace Ecommerce.Data.Interfaces
 
         public Task<bool> DeleteAsync(int id);
 
+        public Task<bool> ExistsByNameAsync(Category category);
+
     }
 }
