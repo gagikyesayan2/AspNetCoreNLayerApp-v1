@@ -58,5 +58,11 @@ namespace Ecommerce.Data.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task<bool> ExistsByNameAsync(Category category)
+        {
+            var categoryExists = await _context.Categories.AnyAsync(c => c.Name == category.Name);
+            return categoryExists;
+        
+        }
     }
 }
